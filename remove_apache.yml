@@ -4,9 +4,11 @@
   become: true
   tasks:
 
-  - name: remove apache and php packages
+  - name: remove packages from servers
     package:
       name:
         - "{{ apache_package }}"
         - "{{ php_package }}"
+        - "{{ mariadb_package }}"
+        - "{{ samba_package }}"
       state: absent
