@@ -11,4 +11,5 @@
         - "{{ php_package }}"
         - "{{ mariadb_package }}"
         - "{{ samba_package }}"
+        - "{{ unzip_package }}"
       state: absent
