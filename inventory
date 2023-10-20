@@ -1,5 +1,5 @@
 [workstations]
-172.18.0.5
+172.18.0.5 unzip_package=unzip
 
 [web_servers]
 172.18.0.2 apache_package=apache2 php_package=libapache2-mod-php mariadb_package=mariadb-server samba_package=samba
