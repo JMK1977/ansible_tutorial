@@ -23,6 +23,7 @@
   tasks:
 
   - name: install unzip
+    tags: unzip
     package:
       name: unzip
 
