@@ -65,12 +65,13 @@
         - libapache2-mod-php
       state: latest
     when: ansible_distribution == "Ubuntu"
+    register: install_apache
 
   - name: start apache2 service (Ubuntu)
     tags: ubuntu,apache,apache2
     ansible.builtin.shell:
       cmd: service apache2 start
-    when: ansible_distribution == "Ubuntu"
+    when: install_apache.changed
 
   - name: copy default html file for site
     tags: apache,apache2,httpd
@@ -88,13 +89,13 @@
       regexp: '^name'
       line: root@jmknet.com
     when: ansible_distribution == "Ubuntu"
-    register: apache2
+    register: change_file
 
   - name: restart apache2 (Ubuntu)
     tags: ubuntu,apache,apache2
     ansible.builtin.shell:
       cmd: service apache2 restart
-    when: apache2.changed
+    when: change_file.changed
 
 - hosts: db_servers
   become: true
