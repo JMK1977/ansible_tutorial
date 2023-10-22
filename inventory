@@ -1,11 +1,11 @@
 [workstations]
-172.18.0.5 unzip_package=unzip
+172.18.0.5 apache_package=apache2 php_package=libapache2-mod-php mariadb_package=mariadb-server samba_package=samba unzip_package=unzip
 
 [web_servers]
-172.18.0.2 apache_package=apache2 php_package=libapache2-mod-php mariadb_package=mariadb-server samba_package=samba
+172.18.0.2 apache_package=apache2 php_package=libapache2-mod-php mariadb_package=mariadb-server samba_package=samba unzip_package=unzip
 
 [db_servers]
-172.18.0.3 apache_package=apache2 php_package=libapache2-mod-php mariadb_package=mariadb-server samba_package=samba
+172.18.0.3 apache_package=apache2 php_package=libapache2-mod-php mariadb_package=mariadb-server samba_package=samba unzip_package=unzip
 
 [file_servers]
-172.18.0.4 apache_package=apache2 php_package=libapache2-mod-php mariadb_package=mariadb-server samba_package=samba
+172.18.0.4 apache_package=apache2 php_package=libapache2-mod-php mariadb_package=mariadb-server samba_package=samba unzip_package=unzip

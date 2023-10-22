@@ -49,6 +49,14 @@
       state: latest
     when: ansible_distribution == "CentOS"
 
+  - name: start httpd service (CentOS)
+    tags: centos,apache,httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_distribution == "CentOS"
+
   - name: install apache2 package (Ubuntu)
     tags: ubuntu,apache,apache2
     apt:
@@ -56,6 +64,12 @@
         - apache2
         - libapache2-mod-php
       state: latest
+    when: ansible_distribution == "Ubuntu"
+
+  - name: start apache2 service (Ubuntu)
+    tags: ubuntu,apache,apache2
+    ansible.builtin.shell:
+      cmd: service apache2 start
     when: ansible_distribution == "Ubuntu"
 
   - name: copy default html file for site
@@ -66,6 +80,21 @@
       owner: root
       group: root
       mode: 0644
+
+  - name: change ansible_test.txt file
+    tags: apache,apache2,httpd
+    lineinfile:
+      path: /var/www/html/ansible_test.txt
+      regexp: '^name'
+      line: root@jmknet.com
+    when: ansible_distribution == "Ubuntu"
+    register: apache2
+
+  - name: restart apache2 (Ubuntu)
+    tags: ubuntu,apache,apache2
+    ansible.builtin.shell:
+      cmd: service apache2 restart
+    when: apache2.changed
 
 - hosts: db_servers
   become: true
