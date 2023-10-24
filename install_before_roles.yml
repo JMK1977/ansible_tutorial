@@ -1,0 +1,133 @@
+
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: update repository cache (CentOS)
+    tags: always
+    dnf:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "CentOS"
+
+  - name: update repository cache (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Ubuntu"
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAyfUtn9E3rtM/A1OwP5+jStWM4GSYet2NApT8bmMsJK ansible"
+
+- hosts: workstations
+  become: true
+  tasks:
+
+  - name: install unzip
+    tags: unzip
+    package:
+      name: unzip
+
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/1.6.2/terraform_1.6.2_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      owner: root
+      group: root
+      mode: 0755
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+  - name: install httpd package (CentOS)
+    tags: centos,apache,httpd
+    dnf:
+      name:
+        - httpd
+        - php
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+  - name: start httpd service (CentOS)
+    tags: centos,apache,httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install apache2 package (Ubuntu)
+    tags: ubuntu,apache,apache2
+    apt:
+      name:
+        - apache2
+        - libapache2-mod-php
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+    register: install_apache
+
+  - name: start apache2 service (Ubuntu)
+    tags: ubuntu,apache,apache2
+    ansible.builtin.shell:
+      cmd: service apache2 start
+    when: install_apache.changed
+
+  - name: copy default html file for site
+    tags: apache,apache2,httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: change ansible_test.txt file
+    tags: apache,apache2,httpd
+    lineinfile:
+      path: /var/www/html/ansible_test.txt
+      regexp: '^name'
+      line: root@jmknet.com
+    when: ansible_distribution == "Ubuntu"
+    register: change_file
+
+  - name: restart apache2 (Ubuntu)
+    tags: ubuntu,apache,apache2
+    ansible.builtin.shell:
+      cmd: service apache2 restart
+    when: change_file.changed
+
+- hosts: db_servers
+  become: true
+  tasks:
+
+  - name: install mariadb server package (CentOS)
+    tags: centos,db,mariadb
+    dnf:
+      name: mariadb
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+  - name: install mariadb server package (Ubuntu)
+    tags: ubuntu,db,mariadb
+    apt:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: file_servers
+  become: true
+  tasks:
+
+  - name: install samba package
+    tags: samba
+    package:
+      name: samba
+      state: latest
