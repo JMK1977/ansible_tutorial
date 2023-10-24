@@ -3,7 +3,7 @@
 - name: install unzip
   tags: unzip
   package:
-    name: unzip
+    name: "{{ unzip_package }}"
 
 - name: install terraform
   unarchive:

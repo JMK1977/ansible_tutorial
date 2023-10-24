@@ -10,6 +10,6 @@
 - name: install mariadb server package (Ubuntu)
   tags: ubuntu,db,mariadb
   apt:
-    name: mariadb-server
+    name: "{{ mariadb_package_ubuntu }}"
     state: latest
   when: ansible_distribution == "Ubuntu"
