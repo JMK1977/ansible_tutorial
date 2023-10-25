@@ -1,0 +1,5 @@
+---
+
+- name: restart_sshd
+  ansible.builtin.shell:
+    cmd: service ssh restart
